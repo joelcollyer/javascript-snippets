@@ -1,0 +1,22 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "A collection of utilities, experiments, and code tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joelcollyer/javascript-snippets.git"
+  },
+  "author": "Joel Collyer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joelcollyer/javascript-snippets/issues"
+  },
+  "homepage": "https://github.com/joelcollyer/javascript-snippets#readme",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
