@@ -1,4 +1,4 @@
-const tests = ["123", "123.456", "1e10", "5E"];
+const tests = [123, "123", "123.456", "1e10", "5E"];
 
 tests.forEach((int) => {
   console.log({
