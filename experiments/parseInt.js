@@ -1,14 +1,14 @@
 const tests = [
-  123,
-  "123",
-  "123.456",
-  "1e10",
-  "5E",
-  "0",
-  "",
-  false,
-  null,
-  undefined,
+  123, // +int = 123, parseInt = 123
+  "123", // +int = 123, parseInt = 123
+  "123.456", // +int = 123.456, parseInt = 123
+  "1e10", // +int = 10000000000, parseInt = 1
+  "5E", // +int = NaN, parseInt = 5
+  "0", // +int = 0, parseInt = 0
+  "", // +int = 0, parseInt = NaN
+  false, // +int = 0, parseInt = NaN
+  null, // +int = 0, parseInt = NaN
+  undefined, // +int = NaN, parseInt = NaN
 ];
 
 tests.forEach((int) => {
