@@ -1,14 +1,16 @@
 const ordinalMap = {
-  1: "st",
-  2: "nd",
-  3: "rd",
+  one: "st",
+  two: "nd",
+  few: "rd",
+  other: "th",
 };
 
 const ordinal = (num = 0) => {
-  const str = num.toString();
-  const lastDigit = str[str.length - 1];
-  return `${str}${ordinalMap[lastDigit] ?? "th"}`;
+  const pluralRules = new Intl.PluralRules("en-US", { type: "ordinal" });
+  return `${num}${ordinalMap[pluralRules.select(num)]}`;
 };
 
-console.log(ordinal(3));
-console.log(ordinal(57));
+console.log(ordinal(1)); // 1st
+console.log(ordinal(13)); // 13th
+console.log(ordinal(42)); // 42nd
+console.log(ordinal(103)); // 103rd
