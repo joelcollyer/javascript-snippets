@@ -9,6 +9,7 @@ const tests = [
   false, // +int = 0, parseInt = NaN
   null, // +int = 0, parseInt = NaN
   undefined, // +int = NaN, parseInt = NaN
+  "-100.10", // =int = -100.1, parseInt = -100
 ];
 
 tests.forEach((int) => {
