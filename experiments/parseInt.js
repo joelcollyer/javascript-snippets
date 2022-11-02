@@ -15,6 +15,7 @@ const tests = [
 tests.forEach((int) => {
   console.log({
     int,
+    number: Number(int),
     parseInt: parseInt(int, 10),
     coerce: +int,
     equality: +int == int,
