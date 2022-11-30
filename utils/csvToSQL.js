@@ -1,8 +1,7 @@
 const fs = require("fs");
 
 // Config
-const CSV_FILE = "../temp/EXAMPLEFILENAME.csv";
-const TABLE_NAME = "destination_table_name";
+const EXCLUDE_COLUMNS = ["name"];
 const WHERE = "id = ':id'";
 const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
 
@@ -60,7 +59,7 @@ const convertCSVtoSQL = async () => {
   const rows = parseCSV(string);
 
   const columns = Object.keys(rows[0]).filter(
-    (column) => !`${WHERE}`.includes(`${column}`)
+    (col) => !`${WHERE}`.includes(`${col}`) && !EXCLUDE_COLUMNS.includes(col)
   );
 
   const baseSQL = `UPDATE ${TABLE_NAME} SET ${columns
@@ -72,6 +71,7 @@ const convertCSVtoSQL = async () => {
       let statement = `${baseSQL}`;
 
       Object.entries(row).forEach(([col, val]) => {
+        if (EXCLUDE_COLUMNS.includes(col)) return;
         const replacer = new RegExp(`:${col}`, "g");
         statement = statement.replace(replacer, val);
       });
