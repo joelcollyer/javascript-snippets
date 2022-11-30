@@ -1,6 +1,8 @@
 const fs = require("fs");
 
 // Config
+const CSV_FILE = "../temp/EXAMPLEFILENAME.csv";
+const TABLE_NAME = "example_table_name";
 const EXCLUDE_COLUMNS = ["name"];
 const WHERE = "id = ':id'";
 const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
@@ -45,9 +47,9 @@ const parseCSV = (string = "", opts = { separator: ",", eol: "\n\r" }) => {
   // Map each row to the headers and return an array of objects
   return rows.map((row) =>
     row.reduce((obj, val, i = 0) => {
-      const header = headers[i].trim() ?? "";
+      const header = headers[i];
       if (!header) return obj;
-      obj[header] = val.trim();
+      obj[header.trim()] = (val || "").trim();
       return obj;
     }, {})
   );
@@ -59,7 +61,7 @@ const convertCSVtoSQL = async () => {
   const rows = parseCSV(string);
 
   const columns = Object.keys(rows[0]).filter(
-    (col) => !`${WHERE}`.includes(`${col}`) && !EXCLUDE_COLUMNS.includes(col)
+    (col) => !WHERE.includes(col) && !EXCLUDE_COLUMNS.includes(col)
   );
 
   const baseSQL = `UPDATE ${TABLE_NAME} SET ${columns
