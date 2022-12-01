@@ -6,7 +6,10 @@ const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
 
 const TABLE_NAME = "example_table_name";
 const EXCLUDE_COLUMNS = ["name"];
-const WHERE = "id = ':id'";
+const EXTRA_COLUMNS = {
+  updatedAt: "sysdate()",
+  updatedById: "3927",
+};
 
 // Retrieve the contents of a file as a string
 const readFile = async (filePath) => {
@@ -61,12 +64,24 @@ const convertCSVtoSQL = async () => {
   const string = await readFile(CSV_FILE);
   const rows = parseCSV(string);
 
-  const columns = Object.keys(rows[0]).filter(
-    (col) => !WHERE.includes(col) && !EXCLUDE_COLUMNS.includes(col)
-  );
+  const columns = [
+    ...Object.keys(rows[0]),
+    ...Object.keys(EXTRA_COLUMNS),
+  ].filter((col) => !EXCLUDE_COLUMNS.includes(col));
 
-  const set = columns.map((col) => `${col} = ':${col}'`).join(", ");
-  const baseSQL = `UPDATE ${TABLE_NAME} SET ${set} WHERE ${WHERE} LIMIT 1;`;
+  const values = columns.map((col) => {
+    if (Object.keys(EXTRA_COLUMNS).includes(col)) {
+      return `${EXTRA_COLUMNS[col]}`;
+    }
+    return `":${col}"`;
+  });
+
+  const update = columns.map((col, i) => `${col}=${values[i]}`).join(", ");
+
+  const baseSQL = `INSERT INTO ${TABLE_NAME}
+    (${columns.join(", ")})
+    VALUES (${values.join(", ")})
+    ON DUPLICATE KEY UPDATE ${update};`;
 
   const sql = rows
     .map((row) => {
@@ -78,7 +93,7 @@ const convertCSVtoSQL = async () => {
         statement = statement.replace(replacer, val);
       });
 
-      return statement;
+      return statement.replace(/[\s\r\n]+/g, " ").trim();
     })
     .join("\r\n");
 
