@@ -4,6 +4,7 @@ const fs = require("fs");
 const CSV_FILE = "../temp/EXAMPLEFILENAME.csv";
 const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
 const FORMAT = "update"; // 'update' | 'insert'
+const NULL_ON_EMPTY = true; // If false, an empty string will be used for falsey values
 
 const TABLE_NAME = "example_table_name";
 const EXCLUDE_COLUMNS = ["name"];
@@ -70,7 +71,7 @@ const getInsertSQL = (row = {}) => {
     if (Object.keys(EXTRA_COLUMNS).includes(col)) {
       return `${EXTRA_COLUMNS[col]}`;
     }
-    return `":${col}"`;
+    return `:${col}`;
   });
 
   const update = columns.map((col, i) => `${col}=${values[i]}`).join(", ");
@@ -93,7 +94,7 @@ const getUpdateSQL = (row = {}) => {
       if (Object.keys(EXTRA_COLUMNS).includes(col)) {
         return `${col} = ${EXTRA_COLUMNS[col]}`;
       }
-      return `${col} = ":${col}"`;
+      return `${col} = :${col}`;
     })
     .join(", ");
 
@@ -136,7 +137,8 @@ const convertCSVtoSQL = async () => {
     Object.entries(row).forEach(([col, val]) => {
       if (EXCLUDE_COLUMNS.includes(col)) return;
       const replacer = new RegExp(`:${col}`, "g");
-      statement = statement.replace(replacer, val);
+      const replacement = NULL_ON_EMPTY && !val ? "NULL" : `"${val}"`;
+      statement = statement.replace(replacer, replacement);
     });
 
     return statement.replace(/[\s\r\n]+/g, " ").trim();
