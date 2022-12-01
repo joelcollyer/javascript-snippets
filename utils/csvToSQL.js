@@ -1,15 +1,15 @@
 const fs = require("fs");
 
 // Config
-const CSV_FILE = "../temp/EXAMPLEFILENAME.csv";
-const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
+const FORMAT = "update"; // 'update' | 'insert'
 
-const TABLE_NAME = "example_table_name";
+const TABLE_NAME = "lodgelink_sap_supplier";
 const EXCLUDE_COLUMNS = ["name"];
 const EXTRA_COLUMNS = {
   updatedAt: "sysdate()",
   updatedById: "3927",
 };
+const WHERE = "id = :id";
 
 // Retrieve the contents of a file as a string
 const readFile = async (filePath) => {
@@ -59,17 +59,10 @@ const parseCSV = (string = "", opts = { separator: ",", eol: "\n\r" }) => {
   );
 };
 
-// Fetch and parse a CSV file into SQL update statements
-const convertCSVtoSQL = async () => {
-  const string = await readFile(CSV_FILE);
-  const rows = parseCSV(string);
-
-  console.log(`Found ${rows.length} rows in ${CSV_FILE}`);
-
-  const columns = [
-    ...Object.keys(rows[0]),
-    ...Object.keys(EXTRA_COLUMNS),
-  ].filter((col) => !EXCLUDE_COLUMNS.includes(col));
+const getInsert = (row = {}) => {
+  const columns = [...Object.keys(row), ...Object.keys(EXTRA_COLUMNS)].filter(
+    (col) => !EXCLUDE_COLUMNS.includes(col)
+  );
 
   const values = columns.map((col) => {
     if (Object.keys(EXTRA_COLUMNS).includes(col)) {
@@ -84,6 +77,54 @@ const convertCSVtoSQL = async () => {
     (${columns.join(", ")})
     VALUES (${values.join(", ")})
     ON DUPLICATE KEY UPDATE ${update};`;
+
+  return baseSQL;
+};
+
+const getUpdate = (row = {}) => {
+  const columns = [...Object.keys(row), ...Object.keys(EXTRA_COLUMNS)].filter(
+    (col) => !WHERE.includes(col) && !EXCLUDE_COLUMNS.includes(col)
+  );
+
+  const set = columns
+    .map((col) => {
+      if (Object.keys(EXTRA_COLUMNS).includes(col)) {
+        return `${col} = ${EXTRA_COLUMNS[col]}`;
+      }
+      return `${col} = ":${col}"`;
+    })
+    .join(", ");
+
+  const baseSQL = `UPDATE ${TABLE_NAME} SET ${set} WHERE ${WHERE} LIMIT 1;`;
+
+  return baseSQL;
+};
+
+const getBaseSQL = (row = {}) => {
+  let baseSQL = "";
+
+  switch (FORMAT) {
+    case "update":
+      baseSQL = getUpdate(row);
+      break;
+    case "insert":
+      baseSQL = getInsert(row);
+      break;
+    default:
+      throw new Error(`Format ${FORMAT} not supported.`);
+  }
+
+  return baseSQL;
+};
+
+// Fetch and parse a CSV file into SQL update statements
+const convertCSVtoSQL = async () => {
+  const string = await readFile(CSV_FILE);
+  const rows = parseCSV(string);
+
+  console.log(`Found ${rows.length} rows in ${CSV_FILE}`);
+
+  const baseSQL = getBaseSQL(rows[0]);
 
   console.log(baseSQL);
 
