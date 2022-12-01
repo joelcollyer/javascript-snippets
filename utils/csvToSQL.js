@@ -1,9 +1,11 @@
 const fs = require("fs");
 
 // Config
+const CSV_FILE = "../temp/EXAMPLEFILENAME.csv";
+const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
 const FORMAT = "update"; // 'update' | 'insert'
 
-const TABLE_NAME = "lodgelink_sap_supplier";
+const TABLE_NAME = "example_table_name";
 const EXCLUDE_COLUMNS = ["name"];
 const EXTRA_COLUMNS = {
   updatedAt: "sysdate()",
@@ -59,7 +61,7 @@ const parseCSV = (string = "", opts = { separator: ",", eol: "\n\r" }) => {
   );
 };
 
-const getInsert = (row = {}) => {
+const getInsertSQL = (row = {}) => {
   const columns = [...Object.keys(row), ...Object.keys(EXTRA_COLUMNS)].filter(
     (col) => !EXCLUDE_COLUMNS.includes(col)
   );
@@ -73,15 +75,15 @@ const getInsert = (row = {}) => {
 
   const update = columns.map((col, i) => `${col}=${values[i]}`).join(", ");
 
-  const baseSQL = `INSERT INTO ${TABLE_NAME}
+  const sql = `INSERT INTO ${TABLE_NAME}
     (${columns.join(", ")})
     VALUES (${values.join(", ")})
     ON DUPLICATE KEY UPDATE ${update};`;
 
-  return baseSQL;
+  return sql;
 };
 
-const getUpdate = (row = {}) => {
+const getUpdateSQL = (row = {}) => {
   const columns = [...Object.keys(row), ...Object.keys(EXTRA_COLUMNS)].filter(
     (col) => !WHERE.includes(col) && !EXCLUDE_COLUMNS.includes(col)
   );
@@ -95,9 +97,9 @@ const getUpdate = (row = {}) => {
     })
     .join(", ");
 
-  const baseSQL = `UPDATE ${TABLE_NAME} SET ${set} WHERE ${WHERE} LIMIT 1;`;
+  const sql = `UPDATE ${TABLE_NAME} SET ${set} WHERE ${WHERE} LIMIT 1;`;
 
-  return baseSQL;
+  return sql;
 };
 
 const getBaseSQL = (row = {}) => {
@@ -105,10 +107,10 @@ const getBaseSQL = (row = {}) => {
 
   switch (FORMAT) {
     case "update":
-      baseSQL = getUpdate(row);
+      baseSQL = getUpdateSQL(row);
       break;
     case "insert":
-      baseSQL = getInsert(row);
+      baseSQL = getInsertSQL(row);
       break;
     default:
       throw new Error(`Format ${FORMAT} not supported.`);
