@@ -64,6 +64,8 @@ const convertCSVtoSQL = async () => {
   const string = await readFile(CSV_FILE);
   const rows = parseCSV(string);
 
+  console.log(`Found ${rows.length} rows in ${CSV_FILE}`);
+
   const columns = [
     ...Object.keys(rows[0]),
     ...Object.keys(EXTRA_COLUMNS),
@@ -83,21 +85,23 @@ const convertCSVtoSQL = async () => {
     VALUES (${values.join(", ")})
     ON DUPLICATE KEY UPDATE ${update};`;
 
-  const sql = rows
-    .map((row) => {
-      let statement = `${baseSQL}`;
+  console.log(baseSQL);
 
-      Object.entries(row).forEach(([col, val]) => {
-        if (EXCLUDE_COLUMNS.includes(col)) return;
-        const replacer = new RegExp(`:${col}`, "g");
-        statement = statement.replace(replacer, val);
-      });
+  const sql = rows.map((row) => {
+    let statement = `${baseSQL}`;
 
-      return statement.replace(/[\s\r\n]+/g, " ").trim();
-    })
-    .join("\r\n");
+    Object.entries(row).forEach(([col, val]) => {
+      if (EXCLUDE_COLUMNS.includes(col)) return;
+      const replacer = new RegExp(`:${col}`, "g");
+      statement = statement.replace(replacer, val);
+    });
 
-  await writeFile(SQL_FILE, sql);
+    return statement.replace(/[\s\r\n]+/g, " ").trim();
+  });
+
+  await writeFile(SQL_FILE, sql.join("\r\n"));
+
+  console.log(`Wrote ${sql.length} statements to: ${SQL_FILE}`);
 };
 
 convertCSVtoSQL();
