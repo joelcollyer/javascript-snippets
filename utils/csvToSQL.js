@@ -2,10 +2,11 @@ const fs = require("fs");
 
 // Config
 const CSV_FILE = "../temp/EXAMPLEFILENAME.csv";
+const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
+
 const TABLE_NAME = "example_table_name";
 const EXCLUDE_COLUMNS = ["name"];
 const WHERE = "id = ':id'";
-const SQL_FILE = "../temp/EXAMPLEFILENAME.sql";
 
 // Retrieve the contents of a file as a string
 const readFile = async (filePath) => {
@@ -64,9 +65,8 @@ const convertCSVtoSQL = async () => {
     (col) => !WHERE.includes(col) && !EXCLUDE_COLUMNS.includes(col)
   );
 
-  const baseSQL = `UPDATE ${TABLE_NAME} SET ${columns
-    .map((col) => `${col} = ':${col}'`)
-    .join(", ")} WHERE ${WHERE} LIMIT 1;`;
+  const set = columns.map((col) => `${col} = ':${col}'`).join(", ");
+  const baseSQL = `UPDATE ${TABLE_NAME} SET ${set} WHERE ${WHERE} LIMIT 1;`;
 
   const sql = rows
     .map((row) => {
