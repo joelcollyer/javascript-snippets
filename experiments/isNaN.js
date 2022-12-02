@@ -12,3 +12,6 @@ const tests = [
 ];
 
 tests.forEach((num) => console.log({ [num]: isNaN(num) }));
+
+const filterOnNumber = tests.filter(Number);
+console.log({ filterOnNumber });
