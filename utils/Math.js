@@ -1,4 +1,12 @@
 /**
+ * Returns a random number, inclusive of the min and max
+ * @param {Number=0} min
+ * @param {Number=10} max
+ * @returns {Number}
+ */
+const randomNumber = (min = 0, max = 10) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+/**
  * Round a number to a given precision and solve for floating point decimals
  * @param {Number} number
  * @param {Number=2} precision
@@ -19,6 +27,7 @@ const roundTo = (number = 0, precision = 2) =>
 const roundToFixed = (number = 0, precision = 2) => roundTo(number, precision).toFixed(precision);
 
 module.exports = {
+  randomNumber,
   roundTo,
   roundToFixed,
 };
