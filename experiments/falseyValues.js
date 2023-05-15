@@ -5,10 +5,7 @@
  * @returns {string} Defaults to "Unknown Guest" if the params are falsey
  */
 const formatDisplayName = (firstName, lastName) => {
-  const name = (
-    `${firstName && lastName ? `${lastName},` : lastName ?? ""} ` +
-    `${firstName ?? ""}`
-  ).trim();
+  const name = (`${firstName && lastName ? `${lastName},` : lastName ?? ""} ` + `${firstName ?? ""}`).trim();
   if (!name) return "Unknown Guest";
   return name;
 };
@@ -26,3 +23,11 @@ console.log(formatDisplayName(undefined, undefined)); // "Unknown Guest"
 console.log(formatDisplayName(null, null)); // "Unknown Guest"
 console.log(formatDisplayName("John", null)); // "John"
 console.log(formatDisplayName(null, "Doe")); // "Doe"
+
+// Is an empty object truthy?
+const isThisEmpty = {};
+if (isThisEmpty) {
+  console.log(`It's truthy.`);
+} else {
+  console.log(`It's falsy.`);
+}
