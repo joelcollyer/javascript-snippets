@@ -31,3 +31,8 @@ if (isThisEmpty) {
 } else {
   console.log(`It's falsy.`);
 }
+
+console.log("\r\nSpreading undefined into an object...");
+const showBar = false;
+const result = { foo: true, ...(showBar && { bar: true }) };
+console.log(result); // Doesn't throw, and {bar} isn't part of the object
