@@ -6,22 +6,17 @@
 
 const sort = (arr = []) => [...arr].sort((a, b) => a - b);
 
-const min = (arr = []) => sort(arr)[0];
+const min = (arr = []) => sort(arr).at(0);
 
 function rotatedNum(arr = []) {
   const lowestNumber = min(arr);
   const firstIndex = arr.findIndex((num) => num === lowestNumber);
 
-  let rotated = firstIndex;
-
   // If the lowest number appears later in the array return that index instead
-  for (let index = firstIndex + 1; index < arr.length; index++) {
-    const prev = arr[index - 1];
-    const curr = arr[index];
-    if (prev > curr && curr === lowestNumber) rotated = index;
-  }
-
-  return rotated;
+  return arr.reduce((rotated, curr, index) => {
+    if (arr[index - 1] > curr && curr === lowestNumber) return index;
+    return rotated;
+  }, firstIndex);
 }
 
 console.log(rotatedNum([4, 0, 1, 2, 3])); // 1
