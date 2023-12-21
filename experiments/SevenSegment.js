@@ -12,14 +12,14 @@ const SEGMENTS = {
   off: [0, 0, 0, 0, 0, 0, 0],
 };
 
+const CHAR_HEIGHT = 5;
+
 const EOL = "\r\n";
 
-const leftPad = (num = 0, len = 2, char = "0") => {
-  const str = num.toString();
-  return str.length <= len ? `${char.repeat(len)}${str}`.slice(-len) : str;
-};
+const leftPad = (num = 0, len = 2, char = "0") =>
+  `${num}`.length <= len ? `${char.repeat(len)}${num}`.slice(-len) : `${num}`;
 
-const drawPixel = (isOn) => (isOn ? "🟥" : "⬛");
+const drawPixel = (on) => (on ? "🟥" : "⬛");
 
 const drawChar = (num = 0) => {
   const seg = SEGMENTS[num] || SEGMENTS["off"];
@@ -27,19 +27,24 @@ const drawChar = (num = 0) => {
   return pos.map((on, i) => ((i + 1) % 3 === 0 ? drawPixel(on) + EOL : drawPixel(on))).join("");
 };
 
-// TODO: For the number of characters, replace line breaks and put each digit onto the same line
 const drawNum = (num = 0, len = 2) => {
-  return [...leftPad(num, len)].map((num) => drawChar(+num)).join("");
+  const chars = leftPad(num, len)
+    .split("")
+    .map((num) => drawChar(+num).split(EOL));
+
+  const screen = Array.from({ length: CHAR_HEIGHT }, (_, row) => chars.map((char) => char[row]).join("")).join(EOL);
+
+  return screen + EOL;
 };
 
-console.log(drawNum(0, 0));
-console.log(drawNum(1, 0));
-console.log(drawNum(2, 0));
-console.log(drawNum(3, 0));
-console.log(drawNum(4, 0));
-console.log(drawNum(5, 0));
-console.log(drawNum(6, 0));
-console.log(drawNum(7, 0));
-console.log(drawNum(8, 0));
-console.log(drawNum(9, 0));
-console.log(drawNum("x", 0));
+console.log(drawNum(0));
+console.log(drawNum(1));
+console.log(drawNum(2));
+console.log(drawNum(3));
+console.log(drawNum(4));
+console.log(drawNum(5));
+console.log(drawNum(6));
+console.log(drawNum(7));
+console.log(drawNum(8));
+console.log(drawNum(9));
+console.log(drawNum("xx", 0));
