@@ -1,23 +1,24 @@
 const taxFeeCategoryOrder = ["FlatFee", "PerDayFee", "CreditCardFee", "Tax"];
 const taxFeeJurisdictionOrder = ["Property", "Municipal", "County", "State", "Federal"];
 
+function sortByArrayIndex(a = "", b = "", orderArray = []) {
+  const indexA = orderArray.findIndex((elem) => elem === a);
+  const indexB = orderArray.findIndex((elem) => elem === b);
+  if (indexA === -1 || indexB === -1) return 0;
+  return indexA - indexB;
+}
+
 function sortFeesAndTaxes(a, b) {
   const { order: orderA, category: categoryA, jurisdiction: jurisdictionA } = a;
   const { order: orderB, category: categoryB, jurisdiction: jurisdictionB } = b;
 
   // Compare the Categories
-  const categoryAIndex = taxFeeCategoryOrder.findIndex((category) => category === categoryA);
-  const categoryBIndex = taxFeeCategoryOrder.findIndex((category) => category === categoryB);
-  if (categoryAIndex > -1 && categoryBIndex > -1 && categoryA !== categoryB) {
-    return categoryAIndex - categoryBIndex;
-  }
+  const categorySort = sortByArrayIndex(categoryA, categoryB, taxFeeCategoryOrder);
+  if (categorySort !== 0) return categorySort;
 
   // Compare the Jurisdictions
-  const jurisdictionAIndex = taxFeeJurisdictionOrder.findIndex((jurisdiction) => jurisdiction === jurisdictionA);
-  const jurisdictionBIndex = taxFeeJurisdictionOrder.findIndex((jurisdiction) => jurisdiction === jurisdictionB);
-  if (jurisdictionAIndex > -1 && jurisdictionBIndex > -1 && jurisdictionA !== jurisdictionB) {
-    return jurisdictionAIndex - jurisdictionBIndex;
-  }
+  const jurisdictionSort = sortByArrayIndex(jurisdictionA, jurisdictionB, taxFeeJurisdictionOrder);
+  if (jurisdictionSort !== 0) return jurisdictionSort;
 
   // Compare the order
   return orderA - orderB;
