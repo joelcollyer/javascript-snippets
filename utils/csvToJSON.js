@@ -12,6 +12,9 @@ const COLUMNS = {
   date: Date,
   guestName: String,
   state: String,
+  referenceNumber: String,
+  inboundRate: Number,
+  markup: Number,
 };
 
 async function convertCSVtoJSON() {
