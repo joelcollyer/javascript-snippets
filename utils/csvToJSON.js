@@ -2,27 +2,22 @@ const path = require("path");
 const { readFile, writeFile } = require("./fileManager");
 const { parseCSV } = require("./csv");
 
+class ISODate extends Date {
+  regexISODate = new RegExp(/^\d{4}-\d{2}-\d{2}$/);
+
+  constructor(dateString) {
+    super(dateString);
+    this.validate(dateString);
+  }
+
+  validate(dateString) {
+    if (!this.regexISODate.test(dateString)) {
+      throw new Error(`Invalid date format provided. Received: "${dateString}"`);
+    }
+  }
+}
 
 // Define the data type for each column in the CSV
-
-/** Simplified
-const COLUMNS = {
-  bookingId: Number,
-  guestId: Number,
-  guestDayId: Number,
-  roomIndex: Number,
-  date: Date,
-  guestName: String,
-  state: String,
-  referenceNumber: String,
-  inboundRate: Number,
-  markup: Number,
-};
-
-const OPTIONAL_COLUMNS = ['inboundRate', 'markup'];
-CONST REMOVE_COLUMNS = [];
-
-/** Correction Sheet */
 const COLUMNS = {
   bookingId: Number,
   guestId: Number,
@@ -31,16 +26,16 @@ const COLUMNS = {
   bookingNumber: String,
   roomType: String,
   roomIndex: Number,
-  date: Date,
+  date: ISODate,
   guestName: String,
   state: String,
+  inboundRate: Number,
+  markup: Number,
   referenceNumber: String,
 };
 
 const OPTIONAL_COLUMNS = ["referenceNumber"];
 const REMOVE_COLUMNS = ["propertyName", "bookingNumber", "roomType"];
-
-/* -- */
 
 async function convertCSVtoJSON() {
   const inputFilePath = path.resolve(ROOT_PATH, INPUT_FILE_NAME);
