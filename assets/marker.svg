@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50px" height="50px">
+  <g id="marker">
+    <ellipse style="stroke-width: 0px; fill: rgb(87, 42, 49); fill-opacity: 0.4;" cx="25" cy="25" rx="25" ry="25"/>
+    <ellipse style="stroke-width: 0px; fill: rgb(87, 42, 49); fill-opacity: 0.4;" cx="25" cy="25" rx="21" ry="21"/>
+  </g>
+</svg>
