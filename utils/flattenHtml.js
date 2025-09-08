@@ -11,7 +11,7 @@ const html = `<tr>
   <td class="row">
     <p class="subtitle2">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Praesent pharetra, ante a molestie pellentesque, nisl dui viverra metus,
+      Praesent pharetra, <em title="example"> ante a molestie</em> pellentesque, nisl dui viverra metus,
       quis malesuada lorem turpis eu tortor.
     </p>
   </td>
@@ -58,8 +58,8 @@ const str = parse(html, { voidTag: { closingSlash: true } })
   .replace(/[\s]+/gm, " ") // Prune long whitespace
   .replace(/\s\"/g, '"') // Remove trailing whitespace from html attributes
   .replace(/\="\s/g, '="') // Remove leading whitespace from html attributes
-  .replace(/>\s/g, ">") // Remove whitespace from the beginning of html elements
-  .replace(/\s</g, "<") // Remove whitespace from the end of html elements
+  .replace(/(<[^/][^\>]+>)\s/gm, "$1") // Remove whitespace from the beginning of html elements
+  .replace(/[\s]+(<\/[^>]+>)/g, "$1") // Remove whitespace from the end of html elements
   .replace(/\'/g, "\\'"); // Escape single quotes
 
 console.log(str);
